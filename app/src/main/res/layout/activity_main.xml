@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="#000000"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="53dp"
+        android:textColor="#f21707"
+        android:text="5k Trainer"
+        android:textSize="32sp"
+        android:paddingLeft= "12dp" />
+
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#e4ebdf"
+        android:gravity="center"
+        android:paddingTop="150dp"
+        android:paddingBottom="120dp"
+        android:text="Let's Go!"
+        android:textColor="#f21707"
+        android:textSize="20sp" />
+
+    <Spinner
+        android:id="@+id/intensity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:background="#7180de"
+        android:textColor="#f21707"
+        android:entries="@array/running_intensity"/>
+
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="Start"
+        android:onClick="onStart"/>
+
+
+</LinearLayout>
