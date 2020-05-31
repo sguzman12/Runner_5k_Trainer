@@ -5,6 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+//Sigfredo Guzman
+//Date 5-31-2020
+//Purpose: Android App allows the user to train incrementally towards the goal
+//of running a 5k.
 
 public class MainActivity extends AppCompatActivity {
 
