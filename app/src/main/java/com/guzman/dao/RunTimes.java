@@ -19,4 +19,8 @@ public class RunTimes {
     public void setRun(double run){
         this.run = run;
     }
+
+    public String toString(){
+        return String.valueOf(run);
+    }
 }

@@ -2,6 +2,8 @@ package com.guzman.dao;
 //Sigfredo Guzman
 //6/2/2020
 
+import java.util.ArrayList;
+
 /**
  * RunProgram object
  */
@@ -9,7 +11,7 @@ public class RunProgram {
     int id;
     double totalTime;
     RunTimes run;
-    RunTimes schedule[];
+    ArrayList<RunTimes> schedule;
 
     public RunProgram(){}
 
@@ -31,7 +33,7 @@ public class RunProgram {
         this.run = run;
     }
 
-    public RunProgram(int id, double totalTime, RunTimes schedule[]){
+    public RunProgram(int id, double totalTime, ArrayList<RunTimes> schedule){
         this.id = id;
         this.totalTime = totalTime;
         this.schedule = schedule;
@@ -49,7 +51,7 @@ public class RunProgram {
         return run;
     }
 
-    public RunTimes[] getSchedule() {
+    public ArrayList<RunTimes> getSchedule() {
         return schedule;
     }
 
@@ -65,7 +67,12 @@ public class RunProgram {
         this.run = run;
     }
 
-    public void setSchedule(RunTimes schedule[]){
+    public void setSchedule(ArrayList<RunTimes> schedule){
         this.schedule = schedule;
+    }
+
+     public String toString(){
+        return "ID: " + this.id + " Total Time: " + this.totalTime + " Run Program: "
+                + schedule.toString();
     }
 }

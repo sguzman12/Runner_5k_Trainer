@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class TrainingActivity extends AppCompatActivity {
 
     public static final int EXTRA_INTENSITY = 0;
+    private RunProgram program = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,25 +29,31 @@ public class TrainingActivity extends AppCompatActivity {
 
     /**
      * Running program created according to the user selected level.
+     *
      * @param intensity Spinner value selected in the MainActivity class
      */
-    private void setRunProgram(int intensity){
-        RunTimes runTimes =  null;
-        ArrayList<RunProgram> schedule = null;
+    private void setRunProgram(int intensity) {
+        RunTimes runTimes = null;
+        ArrayList<RunTimes> schedule = null;
 
-        if(intensity > 0){
-            switch (intensity){
+        if (intensity > 0) {
+            switch (intensity) {
                 case 1:
                     double array[] = {
                             1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
                             1, 1, 1, 1, 1, 1, 1, 1, 1, 1
                     };
+
+                    double totalTime = 20;
+
                     schedule = new ArrayList();
 
-                    for(double r: array){
+                    for (double r : array) {
                         runTimes = new RunTimes(r);
-                       // schedule.add(runTimes);
+                        schedule.add(runTimes);
                     }
+                    program = new RunProgram(intensity, totalTime, schedule);
+                    System.out.println(program.toString());
                     break;
 
                 case 2:
