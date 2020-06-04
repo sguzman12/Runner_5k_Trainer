@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.widget.TextView;
 
 import com.guzman.dao.RunProgram;
 import com.guzman.dao.RunTimes;
@@ -12,8 +14,10 @@ import java.util.ArrayList;
 
 public class TrainingActivity extends AppCompatActivity {
 
-    public static final int EXTRA_INTENSITY = 0;
-    private RunProgram program = null;
+    public static final int EXTRA_INTENSITY = 0; //User intensity level
+    private RunProgram program = null; //Program object
+    private int sectionSeconds = 0;
+    private int fullTimeSeconds = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,25 @@ public class TrainingActivity extends AppCompatActivity {
 
         setRunProgram(i);
 
+        runTimer(program);
+    }
+
+    private void runTimer(final RunProgram prog) {
+        //System.out.println(prog.getTotalTime())
+        final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
+        final Handler handler = new Handler();
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+              sectionSeconds = prog.getSchedule().indexOf(0);
+
+            }
+        });
+    }
+
+    private void runTimerHelper(int seconds){
+        int hours = seconds/3600;
     }
 
     /**
@@ -39,21 +62,16 @@ public class TrainingActivity extends AppCompatActivity {
         if (intensity > 0) {
             switch (intensity) {
                 case 1:
-                    double array[] = {
-                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                            1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-                    };
-
-                    double totalTime = 20;
+                    double totalTime = 1200;
 
                     schedule = new ArrayList();
 
-                    for (double r : array) {
+                    for (double r : programOne) {
                         runTimes = new RunTimes(r);
                         schedule.add(runTimes);
                     }
                     program = new RunProgram(intensity, totalTime, schedule);
-                    System.out.println(program.toString());
+                    //System.out.println(program.toString());
                     break;
 
                 case 2:
@@ -75,4 +93,9 @@ public class TrainingActivity extends AppCompatActivity {
         }
     }
 
+    //Program Array Schedules
+    double programOne[] = {
+            60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+            60, 60, 60, 60, 60, 60, 60, 60, 60, 60
+    };
 }
