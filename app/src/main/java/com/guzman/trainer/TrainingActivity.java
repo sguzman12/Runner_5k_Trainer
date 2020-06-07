@@ -11,6 +11,7 @@ import com.guzman.dao.RunProgram;
 import com.guzman.dao.RunTimes;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TrainingActivity extends AppCompatActivity {
 
@@ -18,6 +19,7 @@ public class TrainingActivity extends AppCompatActivity {
     private RunProgram program = null; //Program object
     private int sectionSeconds = 0;
     private int fullTimeSeconds = 0;
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,23 +40,33 @@ public class TrainingActivity extends AppCompatActivity {
         final ArrayList<Integer> sectors = prog.getSchedule();
         final Handler handler = new Handler();
 
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                // sectors.forEach((s) -> runTimerHelper(s));
-                for (Integer i : sectors) {
-                    int minutes = i / 60;
-                    int seconds = i % 60;
+        // sectors.forEach((s) -> runTimerHelper(s));
+        for (Integer i : sectors) {
+            sectionSeconds = i;
+            //System.out.println(sectionSeconds);
+            runnable = (new Runnable() {
+                @Override
+                public void run() {
 
-                    String time = String.format("%02d:02%d", minutes, seconds);
-                    sectionCountdown.setText(time);
+                        handler.postDelayed(this, 1000);
 
-                    i--;
-                    handler.postDelayed(this, 1000);
+                        // System.out.println(sectionSeconds);
+                        int minutes = sectionSeconds / 60;
+                        int seconds = sectionSeconds % 60;
+
+                        String time = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+
+                        sectionCountdown.setText(time);
+
+                        sectionSeconds--;
+
+
+
+                    handler.postDelayed(runnable, 1000);
                 }
+            });
+        }
 
-            }
-        });
     }
 
     private void runTimerHelper(int secs) {
