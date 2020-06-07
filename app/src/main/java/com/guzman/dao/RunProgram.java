@@ -11,7 +11,7 @@ public class RunProgram {
     int id;
     double totalTime;
     RunTimes run;
-    ArrayList<RunTimes> schedule;
+    ArrayList<Integer> schedule;
 
     public RunProgram(){}
 
@@ -33,7 +33,7 @@ public class RunProgram {
         this.run = run;
     }
 
-    public RunProgram(int id, double totalTime, ArrayList<RunTimes> schedule){
+    public RunProgram(int id, double totalTime, ArrayList<Integer> schedule){
         this.id = id;
         this.totalTime = totalTime;
         this.schedule = schedule;
@@ -51,7 +51,7 @@ public class RunProgram {
         return run;
     }
 
-    public ArrayList<RunTimes> getSchedule() {
+    public ArrayList<Integer> getSchedule() {
         return schedule;
     }
 
@@ -67,7 +67,7 @@ public class RunProgram {
         this.run = run;
     }
 
-    public void setSchedule(ArrayList<RunTimes> schedule){
+    public void setSchedule(ArrayList<Integer> schedule){
         this.schedule = schedule;
     }
 

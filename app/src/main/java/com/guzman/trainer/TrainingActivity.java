@@ -35,19 +35,31 @@ public class TrainingActivity extends AppCompatActivity {
     private void runTimer(final RunProgram prog) {
         //System.out.println(prog.getTotalTime())
         final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
+        final ArrayList<Integer> sectors = prog.getSchedule();
         final Handler handler = new Handler();
 
         handler.post(new Runnable() {
             @Override
             public void run() {
-              sectionSeconds = prog.getSchedule().indexOf(0);
+                // sectors.forEach((s) -> runTimerHelper(s));
+                for (Integer i : sectors) {
+                    int minutes = i / 60;
+                    int seconds = i % 60;
+
+                    String time = String.format("%02d:02%d", minutes, seconds);
+                    sectionCountdown.setText(time);
+
+                    i--;
+                    handler.postDelayed(this, 1000);
+                }
 
             }
         });
     }
 
-    private void runTimerHelper(int seconds){
-        int hours = seconds/3600;
+    private void runTimerHelper(int secs) {
+
+        //return Strin
     }
 
     /**
@@ -57,7 +69,7 @@ public class TrainingActivity extends AppCompatActivity {
      */
     private void setRunProgram(int intensity) {
         RunTimes runTimes = null;
-        ArrayList<RunTimes> schedule = null;
+        ArrayList<Integer> schedule = null;
 
         if (intensity > 0) {
             switch (intensity) {
@@ -66,12 +78,12 @@ public class TrainingActivity extends AppCompatActivity {
 
                     schedule = new ArrayList();
 
-                    for (double r : programOne) {
-                        runTimes = new RunTimes(r);
-                        schedule.add(runTimes);
+                    for (int r : programOne) {
+                        //runTimes = new RunTimes(r);
+                        schedule.add(r);
                     }
                     program = new RunProgram(intensity, totalTime, schedule);
-                    //System.out.println(program.toString());
+                    System.out.println(program.toString());
                     break;
 
                 case 2:
@@ -94,7 +106,7 @@ public class TrainingActivity extends AppCompatActivity {
     }
 
     //Program Array Schedules
-    double programOne[] = {
+    int programOne[] = {
             60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
             60, 60, 60, 60, 60, 60, 60, 60, 60, 60
     };
