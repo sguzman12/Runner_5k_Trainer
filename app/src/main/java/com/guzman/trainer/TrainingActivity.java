@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.widget.TextView;
 
@@ -20,6 +21,8 @@ public class TrainingActivity extends AppCompatActivity {
     private int sectionSeconds = 0;
     private int fullTimeSeconds = 0;
     private Runnable runnable;
+    private boolean running = true;
+    private CountDownTimer timer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,29 +45,35 @@ public class TrainingActivity extends AppCompatActivity {
 
         // sectors.forEach((s) -> runTimerHelper(s));
         for (Integer i : sectors) {
-            sectionSeconds = i;
-            //System.out.println(sectionSeconds);
-            runnable = (new Runnable() {
+
+            timer = new CountDownTimer(i * 1000, 1000) {
+
+                /**
+                 * Callback fired on regular interval.
+                 *
+                 * @param millisUntilFinished The amount of time until finished.
+                 */
                 @Override
-                public void run() {
+                public void onTick(long millisUntilFinished) {
+                    int seconds = (int) (millisUntilFinished / 1000);
+                    int minutes = seconds / 60;
+                    seconds = seconds % 60;
 
-                        handler.postDelayed(this, 1000);
-
-                        // System.out.println(sectionSeconds);
-                        int minutes = sectionSeconds / 60;
-                        int seconds = sectionSeconds % 60;
-
-                        String time = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-
-                        sectionCountdown.setText(time);
-
-                        sectionSeconds--;
-
-
-
-                    handler.postDelayed(runnable, 1000);
+                    String time = String.format("%02d:%02d", minutes, seconds);
+                    sectionCountdown.setText(time);
                 }
-            });
+
+                /**
+                 * Callback fired when the time is up.
+                 */
+                @Override
+                public void onFinish() {
+                    sectionCountdown.setText("Finished");
+                    //timer.cancel();
+
+                }
+            }.start();
+            continue;
         }
 
     }
@@ -119,7 +128,7 @@ public class TrainingActivity extends AppCompatActivity {
 
     //Program Array Schedules
     int programOne[] = {
-            60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+            5, 5, 60, 60, 60, 60, 60, 60, 60, 60,
             60, 60, 60, 60, 60, 60, 60, 60, 60, 60
     };
 }
