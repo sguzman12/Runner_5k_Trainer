@@ -67,25 +67,20 @@ public class TrainingActivity extends AppCompatActivity {
                 String time = String.format("%02d:%02d", minutes, seconds);
                 sectionCountdown.setText(time);
 
-
                 sectionSeconds--;
 
-                if(sectionSeconds < 0 && counter < sectors.size() - 1){
+                if (sectionSeconds >= 0) {
+                    mHandler.postDelayed(this, 1000);
+                } else if (counter < sectors.size() - 1) {
                     counter++;
                     sectionSeconds = sectors.get(counter);
-                }else{
-
+                    mHandler.postDelayed(this, 1000);
+                } else {
+                    sectionCountdown.setText("Finished");
+                    mHandler.removeCallbacks(this);
                 }
-
-
-                mHandler.postDelayed(this, 1000);
             }
-
-
         });
-
-        System.out.println("Finished");
-        sectionCountdown.setText("Finished");
     }
 
 
