@@ -10,24 +10,20 @@ import android.widget.TextView;
 
 import com.guzman.dao.RunProgram;
 import com.guzman.dao.RunTimes;
-import com.guzman.dao.Timer;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class TrainingActivity extends AppCompatActivity {
 
     public static final int EXTRA_INTENSITY = 0; //User intensity level
-
     private RunProgram program = null; //Program object
     private Handler mHandler;
-    private int sectionSeconds = 0;
+    private int sectionSeconds;
     private int fullTimeSeconds = 0;
-    private Runnable runnable;
     private boolean running = true;
     private CountDownTimer timer = null;
-    private int counter = 0;
-    private int delay = 0;
+    private int counter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,92 +35,47 @@ public class TrainingActivity extends AppCompatActivity {
 
         setRunProgram(i);
 
-        runTimer(program);
-    }
+        ArrayList<Integer> sectors = new ArrayList<Integer>();
 
-    private void runTimer(final RunProgram prog) {
-        //System.out.println(prog.getTotalTime())
-        //sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
-        final ArrayList<Integer> sectors = prog.getSchedule();
-        //final Handler handler = new Handler();
-
-        // sectors.forEach((s) -> runTimerHelper(s));
-        /*
-        for(int i: sectors) {
-            runTimerHelper(i, sectors, sectionCountdown);
-
-            System.out.println(i);
+        for (int time : program.getSchedule()) {
+            sectors.add(time);
         }
-*/
-        newTime(sectors);
-
-
+        runTimer(sectors);
     }
 
-    private void runTimerHelper(final int secs, final ArrayList<Integer> sectors, final TextView sectionCountdown) {
+    /**
+     * Handler class that runs the countdown and updates the UI. If the seconds in
+     * the section are still above 0 then one is subtracted. Once they reach zero then
+     * the next item in the ArrayList is the new sectionSeconds variable.
+     *
+     * @param sectors ArrayList of program times.
+     */
+    private void runTimer(final ArrayList<Integer> sectors) {
+        final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
+        mHandler = new Handler();
+        counter = 0;
+        sectionSeconds = sectors.get(counter);
 
-
-        timer = new CountDownTimer((secs + 1) * 1000, 1000) {
-
-            /**
-             * Callback fired on regular interval.
-             *
-             * @param millisUntilFinished The amount of time until finished.
-             */
+        mHandler.post(new Runnable() {
             @Override
-            public void onTick(long millisUntilFinished) {
-
-                int seconds = (int) (millisUntilFinished / 1000);
-                int minutes = seconds / 60;
-                seconds = seconds % 60;
+            public void run() {
+                int minutes = sectionSeconds / 60;
+                int seconds = sectionSeconds % 60;
 
                 String time = String.format("%02d:%02d", minutes, seconds);
                 sectionCountdown.setText(time);
-
+                //System.out.println(sectionSeconds);
+                if (sectionSeconds > 0) {
+                    sectionSeconds--;
+                } else {
+                    counter++;
+                    sectionSeconds = sectors.get(counter);
+                }
+                mHandler.postDelayed(this, 1000);
             }
-
-            /**
-             * Callback fired when the time is up.
-             */
-            @Override
-            public void onFinish() {
-                sectionCountdown.setText("Finished");
-                timer.cancel();
-                System.out.println(secs);
-            }
-        }.start();
-
-
+        });
     }
 
-    private void newTime(final ArrayList<Integer> sectors) {
-
-            final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
-            mHandler = new Handler();
-            sectionSeconds = 60;
-
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-
-
-                        int minutes = sectionSeconds / 60;
-                        int seconds = sectionSeconds % 60;
-
-                        String time = String.format("%02d:%02d", minutes, seconds);
-                        sectionCountdown.setText(time);
-
-                        if (sectionSeconds > 0) {
-                            sectionSeconds--;
-
-                        }
-                        mHandler.postDelayed(this, 1000);
-                    }
-
-            });
-
-
-    }
 
     /**
      * Running program created according to the user selected level.
@@ -147,7 +98,6 @@ public class TrainingActivity extends AppCompatActivity {
                         schedule.add(r);
                     }
                     program = new RunProgram(intensity, totalTime, schedule);
-                    System.out.println(program.toString());
                     break;
 
                 case 2:
