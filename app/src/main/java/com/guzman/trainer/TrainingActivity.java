@@ -41,6 +41,7 @@ public class TrainingActivity extends AppCompatActivity {
             sectors.add(time);
         }
         runTimer(sectors);
+        System.out.println("Done");
     }
 
     /**
@@ -59,21 +60,32 @@ public class TrainingActivity extends AppCompatActivity {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+
                 int minutes = sectionSeconds / 60;
                 int seconds = sectionSeconds % 60;
 
                 String time = String.format("%02d:%02d", minutes, seconds);
                 sectionCountdown.setText(time);
-                //System.out.println(sectionSeconds);
-                if (sectionSeconds > 0) {
-                    sectionSeconds--;
-                } else {
+
+
+                sectionSeconds--;
+
+                if(sectionSeconds < 0 && counter < sectors.size() - 1){
                     counter++;
                     sectionSeconds = sectors.get(counter);
+                }else{
+
                 }
+
+
                 mHandler.postDelayed(this, 1000);
             }
+
+
         });
+
+        System.out.println("Finished");
+        sectionCountdown.setText("Finished");
     }
 
 
@@ -85,11 +97,12 @@ public class TrainingActivity extends AppCompatActivity {
     private void setRunProgram(int intensity) {
         RunTimes runTimes = null;
         ArrayList<Integer> schedule = null;
+        double totalTime;
 
         if (intensity > 0) {
             switch (intensity) {
                 case 1:
-                    double totalTime = 1200;
+                    totalTime = 1200;
 
                     schedule = new ArrayList();
 
@@ -101,7 +114,15 @@ public class TrainingActivity extends AppCompatActivity {
                     break;
 
                 case 2:
-                    System.out.println("Second");
+                    totalTime = 1200;
+
+                    schedule = new ArrayList();
+
+                    for (int r : testProgram) {
+                        //runTimes = new RunTimes(r);
+                        schedule.add(r);
+                    }
+                    program = new RunProgram(intensity, totalTime, schedule);
                     break;
 
                 case 3:
@@ -123,5 +144,9 @@ public class TrainingActivity extends AppCompatActivity {
     int programOne[] = {
             5, 5, 60, 60, 60, 60, 60, 60, 60, 60,
             60, 60, 60, 60, 60, 60, 60, 60, 60, 60
+    };
+
+    int testProgram[] = {
+            3, 4, 5, 6
     };
 }
