@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.guzman.dao.RunProgram;
 import com.guzman.dao.RunTimes;
+import com.guzman.dao.Timer;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -17,12 +18,16 @@ import java.util.Locale;
 public class TrainingActivity extends AppCompatActivity {
 
     public static final int EXTRA_INTENSITY = 0; //User intensity level
+
     private RunProgram program = null; //Program object
+    private Handler mHandler;
     private int sectionSeconds = 0;
     private int fullTimeSeconds = 0;
     private Runnable runnable;
     private boolean running = true;
     private CountDownTimer timer = null;
+    private int counter = 0;
+    private int delay = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,48 +44,86 @@ public class TrainingActivity extends AppCompatActivity {
 
     private void runTimer(final RunProgram prog) {
         //System.out.println(prog.getTotalTime())
-        final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
+        //sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
         final ArrayList<Integer> sectors = prog.getSchedule();
-        final Handler handler = new Handler();
+        //final Handler handler = new Handler();
 
         // sectors.forEach((s) -> runTimerHelper(s));
-        for (Integer i : sectors) {
+        /*
+        for(int i: sectors) {
+            runTimerHelper(i, sectors, sectionCountdown);
 
-            timer = new CountDownTimer(i * 1000, 1000) {
-
-                /**
-                 * Callback fired on regular interval.
-                 *
-                 * @param millisUntilFinished The amount of time until finished.
-                 */
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    int seconds = (int) (millisUntilFinished / 1000);
-                    int minutes = seconds / 60;
-                    seconds = seconds % 60;
-
-                    String time = String.format("%02d:%02d", minutes, seconds);
-                    sectionCountdown.setText(time);
-                }
-
-                /**
-                 * Callback fired when the time is up.
-                 */
-                @Override
-                public void onFinish() {
-                    sectionCountdown.setText("Finished");
-                    //timer.cancel();
-
-                }
-            }.start();
-            continue;
+            System.out.println(i);
         }
+*/
+        newTime(sectors);
+
 
     }
 
-    private void runTimerHelper(int secs) {
+    private void runTimerHelper(final int secs, final ArrayList<Integer> sectors, final TextView sectionCountdown) {
 
-        //return Strin
+
+        timer = new CountDownTimer((secs + 1) * 1000, 1000) {
+
+            /**
+             * Callback fired on regular interval.
+             *
+             * @param millisUntilFinished The amount of time until finished.
+             */
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                int seconds = (int) (millisUntilFinished / 1000);
+                int minutes = seconds / 60;
+                seconds = seconds % 60;
+
+                String time = String.format("%02d:%02d", minutes, seconds);
+                sectionCountdown.setText(time);
+
+            }
+
+            /**
+             * Callback fired when the time is up.
+             */
+            @Override
+            public void onFinish() {
+                sectionCountdown.setText("Finished");
+                timer.cancel();
+                System.out.println(secs);
+            }
+        }.start();
+
+
+    }
+
+    private void newTime(final ArrayList<Integer> sectors) {
+
+            final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
+            mHandler = new Handler();
+            sectionSeconds = 60;
+
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+
+
+                        int minutes = sectionSeconds / 60;
+                        int seconds = sectionSeconds % 60;
+
+                        String time = String.format("%02d:%02d", minutes, seconds);
+                        sectionCountdown.setText(time);
+
+                        if (sectionSeconds > 0) {
+                            sectionSeconds--;
+
+                        }
+                        mHandler.postDelayed(this, 1000);
+                    }
+
+            });
+
+
     }
 
     /**
