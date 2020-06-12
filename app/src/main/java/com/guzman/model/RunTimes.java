@@ -1,4 +1,4 @@
-package com.guzman.dao;
+package com.guzman.model;
 //Sigfredo Guzman
 //6/2/2020
 

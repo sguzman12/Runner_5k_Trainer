@@ -8,8 +8,8 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.widget.TextView;
 
-import com.guzman.dao.RunProgram;
-import com.guzman.dao.RunTimes;
+import com.guzman.model.RunProgram;
+import com.guzman.model.RunTimes;
 
 import java.util.ArrayList;
 
