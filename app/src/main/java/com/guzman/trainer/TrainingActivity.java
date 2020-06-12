@@ -17,6 +17,8 @@ public class TrainingActivity extends AppCompatActivity {
 
     public static final int EXTRA_INTENSITY = 0; //User intensity level
     private RunProgram program = null; //Program object
+    private RunTimes runTimes = null;
+    private ArrayList<RunTimes> runTimesArrayList;
     private Handler mHandler;
     private int sectionSeconds;
     private int fullTimeSeconds = 0;
@@ -34,13 +36,18 @@ public class TrainingActivity extends AppCompatActivity {
         int i = intent.getIntExtra("EXTRA_INTENSITY", EXTRA_INTENSITY);
 
         setRunProgram(i);
-
+        /*
         ArrayList<Integer> sectors = new ArrayList<Integer>();
 
         for (int time : program.getSchedule()) {
             sectors.add(time);
         }
-        runTimer(sectors);
+
+         */
+
+
+
+        runTimer(runTimesArrayList);
         System.out.println("Done");
     }
 
@@ -51,29 +58,31 @@ public class TrainingActivity extends AppCompatActivity {
      *
      * @param sectors ArrayList of program times.
      */
-    private void runTimer(final ArrayList<Integer> sectors) {
+    private void runTimer(final ArrayList<RunTimes> sectors) {
         final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
+        final TextView sectionActivity = (TextView) findViewById(R.id.runMessage);
+
         mHandler = new Handler();
         counter = 0;
-        sectionSeconds = sectors.get(counter);
+        sectionSeconds = (int) sectors.get(counter).getRun();
 
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-
+               // String runOrWalk =
                 int minutes = sectionSeconds / 60;
                 int seconds = sectionSeconds % 60;
 
                 String time = String.format("%02d:%02d", minutes, seconds);
                 sectionCountdown.setText(time);
-
+                sectionActivity.setText(String.valueOf(sectors.get(counter).getActive()));
                 sectionSeconds--;
 
                 if (sectionSeconds >= 0) {
                     mHandler.postDelayed(this, 1000);
                 } else if (counter < sectors.size() - 1) {
                     counter++;
-                    sectionSeconds = sectors.get(counter);
+                    sectionSeconds = (int) sectors.get(counter).getRun();
                     mHandler.postDelayed(this, 1000);
                 } else {
                     sectionCountdown.setText("Finished");
@@ -105,19 +114,31 @@ public class TrainingActivity extends AppCompatActivity {
                         //runTimes = new RunTimes(r);
                         schedule.add(r);
                     }
-                    program = new RunProgram(intensity, totalTime, schedule);
+                    program = new RunProgram(intensity, totalTime, runTimesArrayList);
                     break;
 
                 case 2:
                     totalTime = 1200;
-
-                    schedule = new ArrayList();
+                    int choice = 0;
+                   // schedule = new ArrayList();
+                    runTimesArrayList = new ArrayList();
 
                     for (int r : testProgram) {
-                        //runTimes = new RunTimes(r);
-                        schedule.add(r);
+                        runTimes = new RunTimes(r);
+
+                        if(choice == 0){
+                            runTimes.setActive(RunTimes.RunMovement.Run);
+                            choice = 1;
+                        }else{
+                            choice = 0;
+                            runTimes.setActive(RunTimes.RunMovement.Walk);
+                        }
+
+                        runTimesArrayList.add(runTimes);
+                       // schedule.add(r);
                     }
-                    program = new RunProgram(intensity, totalTime, schedule);
+                    program = new RunProgram(intensity, totalTime, runTimesArrayList);
+                   // program = new RunProgram(intensity, totalTime, schedule);
                     break;
 
                 case 3:
@@ -144,4 +165,6 @@ public class TrainingActivity extends AppCompatActivity {
     int testProgram[] = {
             3, 4, 5, 6
     };
+
+
 }
