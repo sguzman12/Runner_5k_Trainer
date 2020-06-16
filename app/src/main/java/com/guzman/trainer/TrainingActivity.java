@@ -21,9 +21,7 @@ public class TrainingActivity extends AppCompatActivity {
     private ArrayList<RunTimes> runTimesArrayList;
     private Handler mHandler;
     private int sectionSeconds;
-    private int fullTimeSeconds = 0;
     private boolean running = true;
-    private CountDownTimer timer = null;
     private int counter;
 
 
@@ -36,18 +34,9 @@ public class TrainingActivity extends AppCompatActivity {
         int i = intent.getIntExtra("EXTRA_INTENSITY", EXTRA_INTENSITY);
 
         setRunProgram(i);
-        /*
-        ArrayList<Integer> sectors = new ArrayList<Integer>();
-
-        for (int time : program.getSchedule()) {
-            sectors.add(time);
-        }
-
-         */
-
-
 
         runTimer(runTimesArrayList);
+
         System.out.println("Done");
     }
 
@@ -69,7 +58,7 @@ public class TrainingActivity extends AppCompatActivity {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-               // String runOrWalk =
+
                 int minutes = sectionSeconds / 60;
                 int seconds = sectionSeconds % 60;
 
@@ -92,68 +81,48 @@ public class TrainingActivity extends AppCompatActivity {
         });
     }
 
-
     /**
      * Running program created according to the user selected level.
      *
      * @param intensity Spinner value selected in the MainActivity class
      */
     private void setRunProgram(int intensity) {
-        RunTimes runTimes = null;
-        ArrayList<Integer> schedule = null;
-        double totalTime;
+        int choice = 0;
+        int totalTime = 0;
+        int[] array = null;
+        runTimesArrayList = new ArrayList();
 
-        if (intensity > 0) {
-            switch (intensity) {
-                case 1:
-                    totalTime = 1200;
+        array = runProgramHelper(intensity);
 
-                    schedule = new ArrayList();
+        for (int r : array) {
+            runTimes = new RunTimes(r);
+            totalTime += r;
 
-                    for (int r : programOne) {
-                        //runTimes = new RunTimes(r);
-                        schedule.add(r);
-                    }
-                    program = new RunProgram(intensity, totalTime, runTimesArrayList);
-                    break;
-
-                case 2:
-                    totalTime = 1200;
-                    int choice = 0;
-                   // schedule = new ArrayList();
-                    runTimesArrayList = new ArrayList();
-
-                    for (int r : testProgram) {
-                        runTimes = new RunTimes(r);
-
-                        if(choice == 0){
-                            runTimes.setActive(RunTimes.RunMovement.Run);
-                            choice = 1;
-                        }else{
-                            choice = 0;
-                            runTimes.setActive(RunTimes.RunMovement.Walk);
-                        }
-
-                        runTimesArrayList.add(runTimes);
-                       // schedule.add(r);
-                    }
-                    program = new RunProgram(intensity, totalTime, runTimesArrayList);
-                   // program = new RunProgram(intensity, totalTime, schedule);
-                    break;
-
-                case 3:
-                    System.out.println("Third");
-                    break;
-
-                case 4:
-                    System.out.println("Fourth");
-                    break;
-
-                case 5:
-                    System.out.println("Fifth");
-
+            if (choice == 0) {
+                runTimes.setActive(RunTimes.RunMovement.Run);
+                choice = 1;
+            } else {
+                choice = 0;
+                runTimes.setActive(RunTimes.RunMovement.Walk);
             }
+            runTimesArrayList.add(runTimes);
         }
+        program = new RunProgram(intensity, totalTime, runTimesArrayList);
+    }
+
+    /**
+     * Returns array according to intensity level.
+     * @param intense Spinner value selected in the MainActivity class
+     * @return array
+     */
+    private int[] runProgramHelper(int intense) {
+        switch (intense) {
+            case 1:
+                return programOne;
+            case 2:
+                return testProgram;
+        }
+        return null;
     }
 
     //Program Array Schedules
