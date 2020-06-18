@@ -1,20 +1,18 @@
 package com.guzman.trainer;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.widget.TextView;
-
 import com.guzman.model.RunProgram;
 import com.guzman.model.RunTimes;
-
+import com.guzman.viewmodel.Timer_ViewModel;
 import java.util.ArrayList;
 
 public class TrainingActivity extends AppCompatActivity {
-
+    private Timer_ViewModel mViewModel;
     public static final int EXTRA_INTENSITY = 0; //User intensity level
     private RunProgram program = null; //Program object
     private RunTimes runTimes = null;
@@ -29,7 +27,7 @@ public class TrainingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training);
-
+        mViewModel = new ViewModelProvider(this).get(Timer_ViewModel.class);
         Intent intent = getIntent();
         int i = intent.getIntExtra("EXTRA_INTENSITY", EXTRA_INTENSITY);
 
