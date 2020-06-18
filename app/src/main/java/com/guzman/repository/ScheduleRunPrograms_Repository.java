@@ -1,5 +1,8 @@
 package com.guzman.repository;
 
+/**
+ * Holds the Arrays for the RunTime Schedules
+ */
 public class ScheduleRunPrograms_Repository {
     //Program Array Schedules
     int programOne[] = {
@@ -13,6 +16,11 @@ public class ScheduleRunPrograms_Repository {
 
     public ScheduleRunPrograms_Repository(){}
 
+    /**
+     * Returns Run values as an array.
+     * @param intensity
+     * @return Run Program schedule
+     */
     public int[] getProgram(int intensity) {
         switch (intensity) {
             case 1:

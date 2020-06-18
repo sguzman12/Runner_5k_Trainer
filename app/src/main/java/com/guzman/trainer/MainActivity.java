@@ -11,6 +11,9 @@ import android.widget.Spinner;
 //Purpose: Android App allows the user to train incrementally towards the goal
 //of running a 5k.
 
+/**
+ * Welcome page once application is started.
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
