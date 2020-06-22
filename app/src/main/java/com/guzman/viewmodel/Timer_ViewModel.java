@@ -5,11 +5,13 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.guzman.model.RunProgram;
 import com.guzman.model.RunTimes;
+import com.guzman.model.TrainingModel;
 import com.guzman.repository.ScheduleRunPrograms_Repository;
 
 import java.util.ArrayList;
@@ -26,6 +28,10 @@ public class Timer_ViewModel extends ViewModel {
     private boolean running = true;
     private int counter;
     private MutableLiveData<Integer> currentTime = new MutableLiveData<Integer>();
+    private MutableLiveData<String> currentActive = new MutableLiveData<>();
+    MediatorLiveData<TrainingModel> dataManager = new MediatorLiveData();
+    private Integer sectionSecs;
+    private TrainingModel tm;
 
     /**
      * Default constructor. Set's up and runs the timer. Factory passed in extra values.     *
@@ -54,17 +60,23 @@ public class Timer_ViewModel extends ViewModel {
         mHandler = new Handler();
         counter = 0;
         sectionSeconds = (int) sectors.get(counter).getRun();
+        //sectionSecs =  sectionSeconds;
 
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                int minutes = sectionSeconds / 60;
-                int seconds = sectionSeconds % 60;
-
+                String activity = String.valueOf(sectors.get(counter).getActive());
+                sectionSecs =  sectionSeconds;
                 sectionSeconds--;
 
                 if (sectionSeconds >= 0) {
-                    currentTime.postValue(sectionSeconds);
+                   // currentTime.postValue(sectionSeconds);
+                    //currentActive.postValue(activity);
+
+                    //New Stuff
+                    tm = new TrainingModel(sectionSeconds, activity);
+                    dataManager.addSource(currentTime, value ->dataManager.setValue(tm));
+                    //
                     mHandler.postDelayed(this, 1000);
                 } else if (counter < sectors.size() - 1) {
                     counter++;
@@ -118,6 +130,8 @@ public class Timer_ViewModel extends ViewModel {
     public LiveData<Integer> getTime() {
         return currentTime;
     }
+
+    public MediatorLiveData<TrainingModel> getActive(){return dataManager;}
 
     /**
      * Clears LiveData

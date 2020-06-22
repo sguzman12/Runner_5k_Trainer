@@ -1,6 +1,7 @@
 package com.guzman.trainer;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.Observer;
 
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.guzman.model.TrainingModel;
 import com.guzman.viewmodel.TimerFactory_ViewModel;
 import com.guzman.viewmodel.Timer_ViewModel;
 
@@ -37,28 +39,45 @@ public class TrainingActivity extends AppCompatActivity {
         TimerFactory_ViewModel factory = new TimerFactory_ViewModel(this.getApplication(), intensity);
         mViewModel = new ViewModelProvider(this, factory).get(Timer_ViewModel.class);
 
-        observeTimer();
+        // observeTimer();
+        observe();
     }
 
     /**
      * Observes LiveData from the Timer_ViewModel. CurrentTime object is retrieved and displayed
      * to TextViews.
      */
+    /*
     private void observeTimer() {
+
         final Observer elapsedTimeObserver = new Observer() {
+            int activity = 0;
+
             /**
              * Called when the data is changed.
              *
              * @param o The new data
              */
+    /*
             @Override
             public void onChanged(Object o) {
+
                 final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
-                // final TextView sectionActivity = (TextView) findViewById(R.id.runMessage);
+                final TextView sectionActivity = (TextView) findViewById(R.id.runMessage);
 
                 int sectionSeconds = (int) o;
                 int minutes = sectionSeconds / 60;
                 int seconds = sectionSeconds % 60;
+
+                if (sectionSeconds == 0) {
+                    if (activity == 0) {
+                        sectionActivity.setText("Run");
+                        activity = 1;
+                    } else {
+                        sectionActivity.setText("Walk");
+                        activity = 0;
+                    }
+                }
 
                 String time = String.format("%02d:%02d", minutes, seconds);
                 sectionCountdown.setText(time);
@@ -73,5 +92,45 @@ public class TrainingActivity extends AppCompatActivity {
 
         mViewModel.getTime().observe(this, elapsedTimeObserver);
     }
+    *
+     */
+
+    private void observe() {
+        final Observer timer = new Observer<TrainingModel>() {
+            /**
+             * Called when the data is changed.
+             *
+             * @param tm The new data
+             */
+            @Override
+            public void onChanged(TrainingModel tm) {
+                final TextView sectionCountdown = (TextView) findViewById(R.id.countdownTimer);
+                final TextView sectionActivity = (TextView) findViewById(R.id.runMessage);
+
+                int sectionSeconds = tm.getSeconds();
+                int minutes = sectionSeconds / 60;
+                int seconds = sectionSeconds % 60;
+
+                String activity = tm.getActivity();
+
+                String time = String.format("%02d:%02d", minutes, seconds);
+                sectionCountdown.setText(time);
+                sectionActivity.setText(activity);
+
+                if (sectionSeconds == -1) {
+                    sectionCountdown.setText("Finished");
+                }
+
+            }
+
+        };
+
+        mViewModel.getActive().observe(this, timer);
+    }
+
 
 }
+
+
+
+
