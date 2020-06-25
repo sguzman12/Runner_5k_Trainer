@@ -5,7 +5,7 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -19,7 +19,8 @@ import java.util.ArrayList;
 /**
  * ViewModel class which handles the Timer.
  */
-public class Timer_ViewModel extends ViewModel {
+public class Timer_ViewModel extends ViewModel
+{
     private RunProgram program = null; //Program object
     private RunTimes runTimes = null;
     private ArrayList<RunTimes> runTimesArrayList;
@@ -27,10 +28,7 @@ public class Timer_ViewModel extends ViewModel {
     private int sectionSeconds;
     private boolean running = true;
     private int counter;
-    private MutableLiveData<Integer> currentTime = new MutableLiveData<Integer>();
-    private MutableLiveData<String> currentActive = new MutableLiveData<>();
-    MediatorLiveData<TrainingModel> dataManager = new MediatorLiveData();
-    private Integer sectionSecs;
+    private MutableLiveData<TrainingModel> current = new MutableLiveData<>();
     private TrainingModel tm;
 
     /**
@@ -39,7 +37,8 @@ public class Timer_ViewModel extends ViewModel {
      * @param application
      * @param intensity   Level of workout
      */
-    public Timer_ViewModel(@NonNull Application application, final int intensity) {
+    public Timer_ViewModel(@NonNull Application application, final int intensity)
+    {
         int intense = intensity;
 
         program = new RunProgram();
@@ -56,47 +55,49 @@ public class Timer_ViewModel extends ViewModel {
      *
      * @param sectors ArrayList of running times in program.
      */
-    public void runTimer(final ArrayList<RunTimes> sectors) {
+    public void runTimer(final ArrayList<RunTimes> sectors)
+    {
         mHandler = new Handler();
         counter = 0;
         sectionSeconds = (int) sectors.get(counter).getRun();
-        //sectionSecs =  sectionSeconds;
 
-        mHandler.post(new Runnable() {
+        mHandler.post(new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 String activity = String.valueOf(sectors.get(counter).getActive());
-                sectionSecs =  sectionSeconds;
+
                 sectionSeconds--;
 
                 if (sectionSeconds >= 0) {
-                   // currentTime.postValue(sectionSeconds);
-                    //currentActive.postValue(activity);
 
-                    //New Stuff
                     tm = new TrainingModel(sectionSeconds, activity);
-                    dataManager.addSource(currentTime, value ->dataManager.setValue(tm));
-                    //
+                    current.postValue(tm);
+
                     mHandler.postDelayed(this, 1000);
                 } else if (counter < sectors.size() - 1) {
                     counter++;
                     sectionSeconds = (int) sectors.get(counter).getRun();
-                    currentTime.postValue(sectionSeconds);
+
                     mHandler.postDelayed(this, 1000);
                 } else {
-                    currentTime.postValue(-1);
+                    tm = new TrainingModel(-1, "Finished!");
+                    current.postValue(tm);
                     mHandler.removeCallbacks(this);
                 }
             }
         });
     }
 
+
     /**
      * Running program created according to the user selected level.
      *
      * @param intensity Spinner value selected in the MainActivity class
      */
-    private RunProgram setRunProgram(int intensity) {
+    private RunProgram setRunProgram(int intensity)
+    {
         int choice = 0;
         int totalTime = 0;
 
@@ -123,21 +124,21 @@ public class Timer_ViewModel extends ViewModel {
     }
 
     /**
-     * Returns the currentTime value to the observer.
+     * Returns the current observable value to the view
      *
-     * @return currentTime
+     * @return current LiveData<TrainingModel> object
      */
-    public LiveData<Integer> getTime() {
-        return currentTime;
+    public LiveData<TrainingModel> getCurrent()
+    {
+        return current;
     }
-
-    public MediatorLiveData<TrainingModel> getActive(){return dataManager;}
 
     /**
      * Clears LiveData
      */
     @Override
-    protected void onCleared() {
+    protected void onCleared()
+    {
         super.onCleared();
     }
 }

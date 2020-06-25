@@ -1,5 +1,9 @@
 package com.guzman.model;
 
+/**
+ * Model class used to create objects for the timer. These are observed in the
+ * TrainingActivity.
+ */
 public class TrainingModel {
 
     public TrainingModel(Integer seconds, String activity){
