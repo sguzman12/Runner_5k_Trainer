@@ -59,7 +59,7 @@ public class Timer_ViewModel extends ViewModel
     {
         mHandler = new Handler();
         counter = 0;
-        sectionSeconds = (int) sectors.get(counter).getRun();
+        sectionSeconds = (int) sectors.get(counter).getRun() + 1;
 
         mHandler.post(new Runnable()
         {
@@ -78,7 +78,7 @@ public class Timer_ViewModel extends ViewModel
                     mHandler.postDelayed(this, 1000);
                 } else if (counter < sectors.size() - 1) {
                     counter++;
-                    sectionSeconds = (int) sectors.get(counter).getRun();
+                    sectionSeconds = (int) sectors.get(counter).getRun() + 1;
 
                     mHandler.postDelayed(this, 1000);
                 } else {
