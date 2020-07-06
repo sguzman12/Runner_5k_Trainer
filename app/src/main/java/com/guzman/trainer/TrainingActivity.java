@@ -27,6 +27,7 @@ public class TrainingActivity extends AppCompatActivity
     private Timer_ViewModel mViewModel;
     public static final int EXTRA_INTENSITY = 0; //User intensity level
     public int intensity;
+    private Intent intent;
 
     /**
      * Method retrieves the intensity of the intended workout. Passes value to the
@@ -38,11 +39,13 @@ public class TrainingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        intent = new Intent(TrainingActivity.this, GPS_Service.class);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training);
 
-        Intent intent = getIntent();
-        intensity = intent.getIntExtra("EXTRA_INTENSITY", EXTRA_INTENSITY);
+        Intent intent1 = getIntent();
+        intensity = intent1.getIntExtra("EXTRA_INTENSITY", EXTRA_INTENSITY);
 
         TimerFactory_ViewModel factory = new TimerFactory_ViewModel(this.getApplication(), intensity);
         mViewModel = new ViewModelProvider(this, factory).get(Timer_ViewModel.class);
@@ -89,7 +92,7 @@ public class TrainingActivity extends AppCompatActivity
 
                 if (sectionSeconds == -1) {
                     sectionCountdown.setText("Finished");
-                    //stopService();
+                    stopService();
                 }
 
             }
@@ -120,9 +123,9 @@ public class TrainingActivity extends AppCompatActivity
     {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startService();
                 } else {
                     Toast.makeText(this, "Permissions Needed", Toast.LENGTH_LONG).show();
@@ -138,18 +141,22 @@ public class TrainingActivity extends AppCompatActivity
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             } else {
                 //Request Location Permission
-
+                startService();
             }
-
         } else {
             //Start Location Service
-
+            startService();
         }
     }
 
-    private void startService(){
-        Intent intent = new Intent(TrainingActivity.this, GPS_Service.class);
+    private void startService()
+    {
         startService(intent);
+    }
+
+    private void stopService()
+    {
+        stopService(intent);
     }
 
 }

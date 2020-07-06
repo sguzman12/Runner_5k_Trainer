@@ -39,6 +39,8 @@ public class GPS_Service extends Service
                 super.onLocationResult(locationResult);
                 Log.d("mylog", "Lat is: " + locationResult.getLastLocation().getLatitude() + ", "
                         + "Lng is: " + locationResult.getLastLocation().getLongitude());
+                System.out.println("Lat is: " + locationResult.getLastLocation().getLatitude() + ", "
+                        + "Lng is: " + locationResult.getLastLocation().getLongitude());
             }
         };
     }
