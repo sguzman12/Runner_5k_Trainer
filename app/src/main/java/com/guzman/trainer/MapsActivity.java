@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -18,13 +20,15 @@ import com.guzman.model.GeoLocationObjectModel;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
+{
     private ArrayList<GeoLocationObjectModel> list;
     private GoogleMap mMap;
     public static final ArrayList<GeoLocationObjectModel> EXTRA_Location = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
@@ -48,14 +52,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap)
+    {
         ArrayList<LatLng> routeList = new ArrayList<>();
         mMap = googleMap;
 
+        int padding = 50;
 
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-        for(GeoLocationObjectModel g: list){
-            System.out.println("Lat: " + g.getLatitude() + " Long:" + g.getLongitude());
+        for (GeoLocationObjectModel g : list) {
+            builder.include(new LatLng(g.getLatitude(), g.getLongitude()));
             routeList.add(new LatLng(g.getLatitude(), g.getLongitude()));
         }
 
@@ -64,16 +71,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         polylineOptions.addAll(routeList);
         polylineOptions.color(Color.RED);
 
+        LatLngBounds bounds = builder.build();
 
+        /**create the camera with bounds and padding to set into map*/
+        final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
-        // Position the map's camera near Alice Springs in the center of Australia,
-        // and set the zoom factor so most of Australia shows on the screen.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-23.684, 133.903), 4));
+        /**call the map call back to know map is loaded or not*/
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback()
+        {
+            @Override
+            public void onMapLoaded()
+            {
+                /**set animated zoom camera into map*/
+                mMap.animateCamera(cu);
+            }
+        });
         mMap.addPolyline(polylineOptions);
-        // Add a marker in Sydney and move the camera
-        //LatLng sydney = new LatLng(-34, 151);
-       // mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
     }
 
 
