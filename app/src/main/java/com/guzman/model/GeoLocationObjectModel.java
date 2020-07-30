@@ -1,19 +1,21 @@
 package com.guzman.model;
 
+import java.io.Serializable;
+
 /**
  * GeoLocation objects created when gathering user GPS location.
  */
-public class GeoLocationObjectModel
+public class GeoLocationObjectModel implements Serializable
 {
-    private float longitude;
-    private float latitude;
+    private double longitude;
+    private double latitude;
 
-    public GeoLocationObjectModel(float longitude, float latitude){
+    public GeoLocationObjectModel(double latitude, double longitude ){
         this.longitude = longitude;
         this.latitude = latitude;
     }
 
-    public float getLongitude()
+    public double getLongitude()
     {
         return longitude;
     }
@@ -23,7 +25,7 @@ public class GeoLocationObjectModel
         this.longitude = longitude;
     }
 
-    public float getLatitude()
+    public double getLatitude()
     {
         return latitude;
     }
