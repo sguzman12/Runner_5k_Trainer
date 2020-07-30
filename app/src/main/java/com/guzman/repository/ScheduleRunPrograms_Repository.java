@@ -11,7 +11,7 @@ public class ScheduleRunPrograms_Repository {
     };
 
     int testProgram[] = {
-            3, 4, 5, 6
+            3
     };
 
     public ScheduleRunPrograms_Repository(){}
