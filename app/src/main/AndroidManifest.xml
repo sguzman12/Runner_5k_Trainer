@@ -17,10 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service
-            android:name="com.guzman.viewmodel.GPS_Service"
-            android:enabled="true"
-            android:exported="true"></service>
+
 
         <activity android:name=".TrainingActivity" />
         <!--
@@ -36,8 +33,10 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:name=".MapsActivity">
+
+
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,6 +44,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.guzman.viewmodel.GPS_Service" />
     </application>
 
 </manifest>

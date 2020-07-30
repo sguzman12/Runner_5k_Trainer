@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, TrainingActivity.class);
         intent.putExtra("EXTRA_INTENSITY", intensity);
+
+
         startActivity(intent);
     }
 

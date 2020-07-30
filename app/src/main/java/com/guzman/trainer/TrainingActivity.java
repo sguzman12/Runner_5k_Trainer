@@ -14,10 +14,13 @@ import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.guzman.model.GeoLocationObjectModel;
 import com.guzman.model.TrainingModel;
 import com.guzman.viewmodel.GPS_Service;
 import com.guzman.viewmodel.TimerFactory_ViewModel;
 import com.guzman.viewmodel.Timer_ViewModel;
+
+import java.util.ArrayList;
 
 /**
  * UI class for the majority of the application running. Calls timer and observes changes.
@@ -51,7 +54,7 @@ public class TrainingActivity extends AppCompatActivity
         mViewModel = new ViewModelProvider(this, factory).get(Timer_ViewModel.class);
 
         observeTimer();
-        startLocationService();
+       // startLocationService();
     }
 
     /**
@@ -92,7 +95,9 @@ public class TrainingActivity extends AppCompatActivity
 
                 if (sectionSeconds == -1) {
                     sectionCountdown.setText("Finished");
-                    stopService();
+                   stopService();
+
+
                 }
 
             }
@@ -156,7 +161,35 @@ public class TrainingActivity extends AppCompatActivity
 
     private void stopService()
     {
-        stopService(intent);
+        ArrayList<GeoLocationObjectModel> list = new ArrayList<>();
+        list = addLocationsToList();
+
+        Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("EXTRA_LOCATION", list);
+
+        startActivity(intent);
+
+       // stopService(intent);
+    }
+
+    private ArrayList<GeoLocationObjectModel> addLocationsToList(){
+       ArrayList<GeoLocationObjectModel> list = new ArrayList<>();
+
+        GeoLocationObjectModel g1 = new GeoLocationObjectModel(-35.016, 143.321);
+        GeoLocationObjectModel g2 = new GeoLocationObjectModel(-34.747, 145.592);
+        GeoLocationObjectModel g3 = new GeoLocationObjectModel(-34.364, 147.891);
+        GeoLocationObjectModel g4 = new GeoLocationObjectModel(-33.501, 150.217);
+        GeoLocationObjectModel g5 = new GeoLocationObjectModel(-32.306, 149.248);
+        GeoLocationObjectModel g6 = new GeoLocationObjectModel(-32.491, 147.309);
+
+        list.add(g1);
+        list.add(g2);
+        list.add(g3);
+        list.add(g4);
+        list.add(g5);
+        list.add(g6);
+
+        return list;
     }
 
 }
