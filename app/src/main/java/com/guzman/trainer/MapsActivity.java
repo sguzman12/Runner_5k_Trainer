@@ -1,10 +1,12 @@
 package com.guzman.trainer;
 
-import androidx.fragment.app.FragmentActivity;
-
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -13,8 +15,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.guzman.model.GeoLocationObjectModel;
 
@@ -38,6 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
     }
 
@@ -54,40 +55,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
-        ArrayList<LatLng> routeList = new ArrayList<>();
         mMap = googleMap;
+        LatLng centerNA = new LatLng(37.0902, -95.7129);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(centerNA));
 
-        int padding = 50;
+        if (!list.isEmpty()) {
+            ArrayList<LatLng> routeList = new ArrayList<>();
 
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            int padding = 50;
 
-        for (GeoLocationObjectModel g : list) {
-            builder.include(new LatLng(g.getLatitude(), g.getLongitude()));
-            routeList.add(new LatLng(g.getLatitude(), g.getLongitude()));
-        }
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
-        //Add polylines to the map
-        PolylineOptions polylineOptions = new PolylineOptions();
-        polylineOptions.addAll(routeList);
-        polylineOptions.color(Color.RED);
-
-        LatLngBounds bounds = builder.build();
-
-        /**create the camera with bounds and padding to set into map*/
-        final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-        /**call the map call back to know map is loaded or not*/
-        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback()
-        {
-            @Override
-            public void onMapLoaded()
-            {
-                /**set animated zoom camera into map*/
-                mMap.animateCamera(cu);
+            for (GeoLocationObjectModel g : list) {
+                builder.include(new LatLng(g.getLatitude(), g.getLongitude()));
+                routeList.add(new LatLng(g.getLatitude(), g.getLongitude()));
             }
-        });
-        mMap.addPolyline(polylineOptions);
 
+            //Add polylines to the map
+            PolylineOptions polylineOptions = new PolylineOptions();
+            polylineOptions.addAll(routeList);
+            polylineOptions.color(Color.RED);
+
+            LatLngBounds bounds = builder.build();
+
+            //create the camera with bounds and padding to set into map
+            final CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+            //call the map call back to know map is loaded or not
+            mMap.setOnMapLoadedCallback(() -> {
+                //set animated zoom camera into map
+                mMap.animateCamera(cu);
+            });
+            mMap.addPolyline(polylineOptions);
+
+        } else {
+            Context context = getApplicationContext();
+            CharSequence text = "Geolocation was not granted permission.";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
     }
 
 
