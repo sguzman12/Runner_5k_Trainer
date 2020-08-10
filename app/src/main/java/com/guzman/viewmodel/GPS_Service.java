@@ -34,7 +34,7 @@ public class GPS_Service extends Service
 
     public class OdometerBinder extends Binder
     {
-        GPS_Service getOdometer()
+        public GPS_Service getOdometer()
         {
             return GPS_Service.this;
         }

@@ -7,10 +7,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.Observer;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,8 @@ public class TrainingActivity extends AppCompatActivity
     public static final int EXTRA_INTENSITY = 0; //User intensity level
     public int intensity;
     private Intent intent;
+    private GPS_Service odometer;
+    private boolean bound = false;
 
     /**
      * Method retrieves the intensity of the intended workout. Passes value to the
@@ -162,7 +167,7 @@ public class TrainingActivity extends AppCompatActivity
     private void stopService()
     {
         ArrayList<GeoLocationObjectModel> list = new ArrayList<>();
-        list = addLocationsToList();
+       // list = addLocationsToList();
 
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("EXTRA_LOCATION", list);
@@ -172,25 +177,23 @@ public class TrainingActivity extends AppCompatActivity
        // stopService(intent);
     }
 
-    private ArrayList<GeoLocationObjectModel> addLocationsToList(){
-       ArrayList<GeoLocationObjectModel> list = new ArrayList<>();
+    private ServiceConnection connection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder binder)
+        {
+            GPS_Service.OdometerBinder odometerBinder =
+                    (GPS_Service.OdometerBinder) binder;
+           // odometer = GPS_Service.OdometerBinder.getOdometer();
+            bound = true;
+        }
 
-        GeoLocationObjectModel g1 = new GeoLocationObjectModel(-35.016, 143.321);
-        GeoLocationObjectModel g2 = new GeoLocationObjectModel(-34.747, 145.592);
-        GeoLocationObjectModel g3 = new GeoLocationObjectModel(-34.364, 147.891);
-        GeoLocationObjectModel g4 = new GeoLocationObjectModel(-33.501, 150.217);
-        GeoLocationObjectModel g5 = new GeoLocationObjectModel(-32.306, 149.248);
-        GeoLocationObjectModel g6 = new GeoLocationObjectModel(-32.491, 147.309);
-
-        list.add(g1);
-        list.add(g2);
-        list.add(g3);
-        list.add(g4);
-        list.add(g5);
-        list.add(g6);
-
-        return list;
-    }
+        @Override
+        public void onServiceDisconnected(ComponentName componentName)
+        {
+            bound = false;
+        }
+    };
 
 }
 
