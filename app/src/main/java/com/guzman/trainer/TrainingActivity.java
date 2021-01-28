@@ -1,11 +1,5 @@
 package com.guzman.trainer;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.Observer;
-
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -16,6 +10,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.guzman.model.GeoLocationObjectModel;
 import com.guzman.model.TrainingModel;
@@ -32,6 +31,8 @@ public class TrainingActivity extends AppCompatActivity
 {
     private Timer_ViewModel mViewModel;
     public static final int EXTRA_INTENSITY = 0; //User intensity level
+    public static final boolean EXTRA_PERMISSION_GRANTED = false; //User Location Permission
+    private boolean permission = false;
     public int intensity;
     private Intent intent;
     private GPS_Service odometer;
@@ -54,12 +55,13 @@ public class TrainingActivity extends AppCompatActivity
 
         Intent intent1 = getIntent();
         intensity = intent1.getIntExtra("EXTRA_INTENSITY", EXTRA_INTENSITY);
+        permission = intent1.getBooleanExtra("EXTRA_PERMISSION_GRANTED", EXTRA_PERMISSION_GRANTED);
 
         TimerFactory_ViewModel factory = new TimerFactory_ViewModel(this.getApplication(), intensity);
         mViewModel = new ViewModelProvider(this, factory).get(Timer_ViewModel.class);
 
         observeTimer();
-       // startLocationService();
+        startLocationService();
     }
 
     /**
