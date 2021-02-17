@@ -2,6 +2,7 @@ package com.guzman.trainer;
 
 import android.Manifest;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -60,8 +61,25 @@ public class TrainingActivity extends AppCompatActivity
         TimerFactory_ViewModel factory = new TimerFactory_ViewModel(this.getApplication(), intensity);
         mViewModel = new ViewModelProvider(this, factory).get(Timer_ViewModel.class);
 
+        //If permission given then bindservice
+        if(!permission){
+            Intent intent = new Intent(this, GPS_Service.class);
+            bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+            startLocationService();
+        }
+
         observeTimer();
-        startLocationService();
+
+
+
+    }
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+
     }
 
     /**
@@ -114,51 +132,13 @@ public class TrainingActivity extends AppCompatActivity
         mViewModel.getCurrent().observe(this, elapsedTimeObserver);
     }
 
-    /**
-     * Callback for the result from requesting permissions. This method
-     * is invoked for every call on {@link #requestPermissions(String[], int)}.
-     * <p>
-     * <strong>Note:</strong> It is possible that the permissions request interaction
-     * with the user is interrupted. In this case you will receive empty permissions
-     * and results arrays which should be treated as a cancellation.
-     * </p>
-     *
-     * @param requestCode  The request code passed in {@link #requestPermissions(String[], int)}.
-     * @param permissions  The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *                     which is either {@link PackageManager#PERMISSION_GRANTED}
-     *                     or {@link PackageManager#PERMISSION_DENIED}. Never null.
-     * @see #requestPermissions(String[], int)
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case 1:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startService();
-                } else {
-                    Toast.makeText(this, "Permissions Needed", Toast.LENGTH_LONG).show();
-                }
-        }
-    }
-
     private void startLocationService()
     {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                //Request Location
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            } else {
+
+        // startService(intent);
                 //Request Location Permission
                 startService();
-            }
-        } else {
-            //Start Location Service
-            startService();
-        }
+
     }
 
     private void startService()
